@@ -1,21 +1,17 @@
-# Use a lightweight Node.js image
 FROM node:18-slim
-
-# Create app directory
 WORKDIR /usr/src/app
 
-# Copy package files first (to cache layers)
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies directly on the server
+# Install dependencies (on the server, so you don't need package-lock)
 RUN npm install --production
 
-# Copy the rest of your code (index.js, etc.)
-COPY . .
+# Copy your server code
+COPY index.js .
 
-# Use the port Koyeb provides
+# Use the port Koyeb gives you
 ENV PORT=8080
 EXPOSE 8080
 
-# Start the server
 CMD [ "node", "index.js" ]
