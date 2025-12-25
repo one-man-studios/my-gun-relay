@@ -1,20 +1,17 @@
-# Use a hardened, minimal Node.js image
-FROM node:18-alpine
+FROM node:18-slim
+WORKDIR /usr/src/app
 
-# Set environment variable to opt-out of various tool telemetries
-ENV DO_NOT_TRACK=1
-ENV NODE_ENV=production
+# Copy package files
+COPY package*.json ./
 
-WORKDIR /app
+# Install dependencies (on the server, so you don't need package-lock)
+RUN npm install --production
 
-# Install ONLY the gun package (no devDependencies)
-RUN npm install gun --omit=dev
-
-# Copy our clean server script
+# Copy your server code
 COPY index.js .
 
-# Expose the Gun port
-EXPOSE 8765
+# Use the port Koyeb gives you
+ENV PORT=8080
+EXPOSE 8080
 
-# Run the server
-CMD ["node", "index.js"]
+CMD [ "node", "index.js" ]
